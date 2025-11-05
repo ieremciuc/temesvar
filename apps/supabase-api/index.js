@@ -34,5 +34,5 @@ app.post("/users", async (req, res) => {
   res.json(data[0]);
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Supabase API running on port ${PORT}`));
