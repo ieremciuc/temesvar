@@ -6,7 +6,9 @@ import { createClient } from "@supabase/supabase-js";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://ieremciuc.github.io"
+}));
 app.use(express.json());
 
 const supabase = createClient(
