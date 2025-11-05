@@ -43,7 +43,7 @@
       formData.append("file", file);
 
       try {
-        const res = await fetch(`https://${CLOUDINARY_API_URL}/upload`, {
+        const res = await fetch(`${CLOUDINARY_API_URL}/upload`, {
           method: "POST",
           body: formData
         });
