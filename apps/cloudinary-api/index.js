@@ -4,7 +4,6 @@ import cors from "cors";
 import cloudinary from "./config.js";
 
 const app = express();
-// app.use(cors());
 app.use(cors({
   origin: "https://ieremciuc.github.io"
 }));
