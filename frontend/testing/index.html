@@ -31,6 +31,8 @@
     const publicIdInput = document.querySelector("#public-id-input");
     const fileInfo = document.querySelector("#file-info");
 
+    console.log(CLOUDINARY_API_URL);
+
     // Upload file when button is clicked
     uploadBtn.addEventListener("click", async () => {
       const file = fileInput.files[0];

@@ -32,6 +32,10 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.send("Media API is running!");
+});
+
 // Fetch file info by public_id
 app.get("/file/:public_id", async (req, res) => {
   try {
