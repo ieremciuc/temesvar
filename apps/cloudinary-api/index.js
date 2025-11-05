@@ -1,50 +1,45 @@
 import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
 import multer from "multer";
-import { v2 as cloudinary } from "cloudinary";
-
-dotenv.config();
+import cloudinary from "./config.js";
 
 const app = express();
 app.use(cors({
   origin: "https://ieremciuc.github.io"
 }));
+
 app.use(express.json());
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// Multer setup for temporary storage
+const upload = multer({ dest: "uploads/" });
 
-const upload = multer({ storage: multer.memoryStorage() });
-
-// Upload image
+// Upload file to Cloudinary
 app.post("/upload", upload.single("file"), async (req, res) => {
   try {
-    const file = req.file;
-    const result = await cloudinary.uploader.upload_stream(
-      { resource_type: "auto" },
-      (error, result) => {
-        if (error) return res.status(400).json({ error });
-        res.json({ url: result.secure_url, public_id: result.public_id });
-      }
-    );
-    result.end(file.buffer);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const filePath = req.file.path;
+
+    const result = await cloudinary.uploader.upload(filePath, {
+      folder: "temesvar"
+    });
+
+    res.json({
+      public_id: result.public_id,
+      secure_url: result.secure_url
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Upload failed" });
   }
 });
 
-// Delete by public_id
-app.delete("/delete/:public_id", async (req, res) => {
+// Fetch file info by public_id
+app.get("/file/:public_id", async (req, res) => {
   try {
     const { public_id } = req.params;
-    const result = await cloudinary.uploader.destroy(public_id);
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const info = await cloudinary.api.resource(public_id);
+    res.json(info);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "File not found" });
   }
 });
 
