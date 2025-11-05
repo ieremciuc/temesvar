@@ -39,7 +39,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 // Fetch file info by public_id
 app.get("/file/*", async (req, res) => {
   try {
-    const public_id = req.params.path;
+    const public_id = req.params[0];
     const info = await cloudinary.api.resource(public_id);
     res.json(info);
   } catch (error) {
