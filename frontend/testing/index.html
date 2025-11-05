@@ -22,7 +22,7 @@
 
   <!-- Config file import -->
   <script type="module">
-    import { CLOUDINARY_API_URL } from './config.js';
+    import { CLOUDINARY_API_URL } from '../config.js';
 
     const fileInput = document.querySelector("#file-input");
     const uploadBtn = document.querySelector("#upload-btn");
@@ -30,8 +30,6 @@
     const fetchInfoBtn = document.querySelector("#fetch-info-btn");
     const publicIdInput = document.querySelector("#public-id-input");
     const fileInfo = document.querySelector("#file-info");
-
-    console.log(CLOUDINARY_API_URL);
 
     // Upload file when button is clicked
     uploadBtn.addEventListener("click", async () => {
