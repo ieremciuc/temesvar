@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media API Demo</title>
+</head>
+<body>
+  <h1>Cloudinary Media API Demo</h1>
+
+  <!-- Upload Section -->
+  <h2>Upload a File</h2>
+  <input type="file" id="file-input">
+  <button id="upload-btn">Upload</button>
+  <div id="upload-result"></div>
+
+  <!-- Fetch File Info Section -->
+  <h2>Get File Info</h2>
+  <input type="text" id="public-id-input" placeholder="Enter public_id">
+  <button id="fetch-info-btn">Fetch Info</button>
+  <pre id="file-info"></pre>
+
+  <!-- Config file import -->
+  <script type="module">
+    import { CLOUDINARY_API_URL } from './config.js';
+
+    const fileInput = document.querySelector("#file-input");
+    const uploadBtn = document.querySelector("#upload-btn");
+    const uploadResult = document.querySelector("#upload-result");
+    const fetchInfoBtn = document.querySelector("#fetch-info-btn");
+    const publicIdInput = document.querySelector("#public-id-input");
+    const fileInfo = document.querySelector("#file-info");
+
+    // Upload file when button is clicked
+    uploadBtn.addEventListener("click", async () => {
+      const file = fileInput.files[0];
+      if (!file) {
+        alert("Please select a file first.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const res = await fetch(`https://${CLOUDINARY_API_URL}/upload`, {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await res.json();
+        uploadResult.innerHTML = `
+          <p><strong>Public ID:</strong> ${data.public_id}</p>
+          <p><strong>Secure URL:</strong> <a href="${data.secure_url}" target="_blank">${data.secure_url}</a></p>
+          <img src="${data.secure_url}" alt="Uploaded Image" width="200">
+        `;
+      } catch (err) {
+        uploadResult.textContent = "Upload failed: " + err.message;
+      }
+    });
+
+    // Fetch file info
+    fetchInfoBtn.addEventListener("click", async () => {
+      const public_id = publicIdInput.value.trim();
+      if (!public_id) return;
+
+      try {
+        const res = await fetch(`https://${CLOUDINARY_API_URL}/file/${public_id}`);
+        const info = await res.json();
+        fileInfo.textContent = JSON.stringify(info, null, 2);
+      } catch (err) {
+        fileInfo.textContent = "Failed to fetch info: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
