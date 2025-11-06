@@ -63,6 +63,7 @@
     fetchInfoBtn.addEventListener("click", async () => {
       const public_id = publicIdInput.value.trim();
       if (!public_id) return;
+      fileInfo.textContent = public_id;
 
       try {
         const res = await fetch(`${CLOUDINARY_API_URL}/file/${public_id}`);
