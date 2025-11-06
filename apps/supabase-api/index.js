@@ -2,15 +2,28 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
+import session from "express-session";
 import bcrypt from "bcrypt"; // for password hashing
 
 dotenv.config();
 
 const app = express();
 app.use(cors({
-  origin: "https://ieremciuc.github.io"
+  origin: "https://ieremciuc.github.io",
+  credentials: true
 }));
 app.use(express.json());
+
+app.use(session({
+  secret: process.env.SESSION_SECRET || "supersecretkey", // use a secure value in production
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: true, // set to true if using HTTPS (e.g. on production)
+    maxAge: 1000 * 60 * 60 // 1 hour
+  }
+}));
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -66,6 +79,9 @@ app.post("/p_users/login", async (req, res) => {
   try {
     const { emailOrUsername, password } = req.body;
 
+    if (!emailOrUsername || !password)
+      return res.status(400).json({ error: "Missing credentials" });
+
     // Try to find user by email OR username
     const { data: user, error } = await supabase
       .from("p_users")
@@ -81,6 +97,8 @@ app.post("/p_users/login", async (req, res) => {
     if (!isPasswordValid)
       return res.status(401).json({ error: "Invalid password" });
 
+    req.session.userId = user.id;
+
     res.json({
       message: "Login successful",
       user: {
@@ -94,6 +112,21 @@ app.post("/p_users/login", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
+});
+
+app.get("/p_users/me", (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ loggedIn: false });
+  }
+  res.json({ loggedIn: true, userId: req.session.userId });
+});
+
+app.post("/p_users/logout", (req, res) => {
+  req.session.destroy(err => {
+    if (err) return res.status(500).json({ error: "Logout failed" });
+    res.clearCookie("connect.sid");
+    res.json({ message: "Logged out successfully" });
+  });
 });
 
 // ---------------------

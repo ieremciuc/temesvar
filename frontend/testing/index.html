@@ -17,7 +17,13 @@
 <body>
   <h1>🧪 Supabase API Test Page</h1>
 
-  <!-- ========== Register User ========== -->
+  <!-- ======= SESSION INFO ======= -->
+  <h2>Current Session</h2>
+  <button id="check-session-btn">Check Logged-in User</button>
+  <button id="logout-btn">Logout</button>
+  <pre id="session-result">Not checked yet.</pre>
+
+  <!-- ======= REGISTER ======= -->
   <h2>Register User</h2>
   <input id="reg-username" placeholder="Username" />
   <input id="reg-email" placeholder="Email" />
@@ -25,16 +31,16 @@
   <button id="register-btn">Register</button>
   <pre id="register-result"></pre>
 
-  <!-- ========== Login ========== -->
+  <!-- ======= LOGIN ======= -->
   <h2>Login</h2>
   <input id="login-email" placeholder="Email or Username" />
   <input id="login-password" placeholder="Password" type="password" />
   <button id="login-btn">Login</button>
   <pre id="login-result"></pre>
 
-  <!-- ========== Create Post ========== -->
+  <!-- ======= CREATE POST ======= -->
   <h2>Create Post</h2>
-  <input id="post-user-id" placeholder="User ID" />
+  <input id="post-user-id" placeholder="User ID (auto after login)" />
   <input id="post-title" placeholder="Post Title" />
   <textarea id="post-content" placeholder="Post Content"></textarea>
   <input id="post-country" placeholder="Country Name" />
@@ -42,24 +48,30 @@
   <button id="create-post-btn">Create Post</button>
   <pre id="create-post-result"></pre>
 
-  <!-- ========== Get Post by ID ========== -->
+  <!-- ======= GET POST ======= -->
   <h2>Get Post by ID</h2>
   <input id="get-post-id" placeholder="Post ID" />
   <button id="get-post-btn">Get Post</button>
   <pre id="get-post-result"></pre>
 
   <script type="module">
-    // Import your API base URL
     import { SUPABASE_API_URL } from "../config.js";
 
-    // ======= Helper function =======
+    // ======= Helper request function =======
     async function request(endpoint, method = "GET", body = null) {
-      const options = { method, headers: { "Content-Type": "application/json" } };
+      const options = {
+        method,
+        headers: { "Content-Type": "application/json" },
+        credentials: "include" // ✅ include cookies for session
+      };
       if (body) options.body = JSON.stringify(body);
 
       const res = await fetch(`${SUPABASE_API_URL}${endpoint}`, options);
-      const data = await res.json();
-      return data;
+      try {
+        return await res.json();
+      } catch {
+        return { error: "Invalid JSON response" };
+      }
     }
 
     // ======= Register =======
@@ -79,6 +91,26 @@
 
       const result = await request("/p_users/login", "POST", { emailOrUsername, password });
       document.querySelector("#login-result").textContent = JSON.stringify(result, null, 2);
+
+      if (result.user?.id) {
+        document.querySelector("#post-user-id").value = result.user.id;
+      }
+    });
+
+    // ======= Check Session =======
+    document.querySelector("#check-session-btn").addEventListener("click", async () => {
+      const result = await request("/p_users/me", "GET");
+      document.querySelector("#session-result").textContent = JSON.stringify(result, null, 2);
+      if (result.userId) {
+        document.querySelector("#post-user-id").value = result.userId;
+      }
+    });
+
+    // ======= Logout =======
+    document.querySelector("#logout-btn").addEventListener("click", async () => {
+      const result = await request("/p_users/logout", "POST");
+      document.querySelector("#session-result").textContent = JSON.stringify(result, null, 2);
+      document.querySelector("#post-user-id").value = "";
     });
 
     // ======= Create Post =======
@@ -103,7 +135,7 @@
     // ======= Get Post =======
     document.querySelector("#get-post-btn").addEventListener("click", async () => {
       const id = document.querySelector("#get-post-id").value;
-      const result = await request(`/posts/${id}`);
+      const result = await request(`/posts/${id}`, "GET");
       document.querySelector("#get-post-result").textContent = JSON.stringify(result, null, 2);
     });
   </script>
