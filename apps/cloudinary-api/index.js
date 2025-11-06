@@ -40,7 +40,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 app.get("/file/*path", async (req, res) => {
   try {
     const public_id = req.params.path;
-    const encoded_id = encodeURIComponent(public_id);
+    public_id.replaceAll(",", "/");
     const info = await cloudinary.api.resource(encoded_id);
     res.json(info);
   } catch (error) {
