@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 3001;
 // ---------------------
 
 // ✅ Register new user
-app.post("/users", async (req, res) => {
+app.post("/p_users", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -34,7 +34,7 @@ app.post("/users", async (req, res) => {
 
     // Check if email or username already exists
     const { data: existingUser } = await supabase
-      .from("users")
+      .from("p_users")
       .select("email, username")
       .or(`email.eq.${email},username.eq.${username}`)
       .maybeSingle();
@@ -47,7 +47,7 @@ app.post("/users", async (req, res) => {
 
     // Insert new user
     const { data, error } = await supabase
-      .from("users")
+      .from("p_users")
       .insert([{ username, email, password: hashedPassword, created_at: new Date() }])
       .select()
       .single();
@@ -62,13 +62,13 @@ app.post("/users", async (req, res) => {
 });
 
 // ✅ Login user (check username/email + password)
-app.post("/users", async (req, res) => {
+app.post("/p_users", async (req, res) => {
   try {
     const { emailOrUsername, password } = req.body;
 
     // Try to find user by email OR username
     const { data: user, error } = await supabase
-      .from("users")
+      .from("p_users")
       .select("*")
       .or(`email.eq.${emailOrUsername},username.eq.${emailOrUsername}`)
       .single();
