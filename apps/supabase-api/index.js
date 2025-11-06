@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
+import bcrypt from "bcrypt"; // for password hashing
 
 dotenv.config();
 
@@ -11,28 +12,163 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Initialize Supabase client
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// Example route: fetch all users
-app.get("/users", async (req, res) => {
-  const { data, error } = await supabase.from("users").select("*");
-  if (error) return res.status(400).json({ error: error.message });
-  res.json(data);
-});
-
-// Example route: insert a new user
-app.post("/users", async (req, res) => {
-  const { username, email } = req.body;
-  const { data, error } = await supabase
-    .from("users")
-    .insert([{ username, email }])
-    .select();
-  if (error) return res.status(400).json({ error: error.message });
-  res.json(data[0]);
-});
-
 const PORT = process.env.PORT || 3001;
+
+// ---------------------
+// 🔹 USER ROUTES
+// ---------------------
+
+// ✅ Register new user
+app.post("/users", async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password)
+      return res.status(400).json({ error: "All fields are required" });
+
+    // Check if email or username already exists
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("email, username")
+      .or(`email.eq.${email},username.eq.${username}`)
+      .maybeSingle();
+
+    if (existingUser)
+      return res.status(400).json({ error: "Email or username already in use" });
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert new user
+    const { data, error } = await supabase
+      .from("users")
+      .insert([{ username, email, password: hashedPassword, created_at: new Date() }])
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json({ message: "User registered successfully", user: data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ✅ Login user (check username/email + password)
+app.post("/users", async (req, res) => {
+  try {
+    const { emailOrUsername, password } = req.body;
+
+    // Try to find user by email OR username
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .or(`email.eq.${emailOrUsername},username.eq.${emailOrUsername}`)
+      .single();
+
+    if (error || !user)
+      return res.status(400).json({ error: "User not found" });
+
+    // Compare hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid)
+      return res.status(401).json({ error: "Invalid password" });
+
+    res.json({
+      message: "Login successful",
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        created_at: user.created_at
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ---------------------
+// 🔹 POST ROUTES
+// ---------------------
+
+// ✅ Get post by ID
+app.get("/posts/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data, error } = await supabase
+      .from("posts")
+      .select("post_id, date, like_count, dislike_count, country_name, user_id, title, content, image")
+      .eq("post_id", id)
+      .single();
+
+    if (error || !data)
+      return res.status(404).json({ error: "Post not found" });
+
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ✅ Create a new post
+app.post("/posts", async (req, res) => {
+  try {
+    const {
+      date,
+      like_count,
+      dislike_count,
+      country_name,
+      country_id,
+      user_id,
+      title,
+      content,
+      image
+    } = req.body;
+
+    // Validate required fields
+    if (!user_id || !title || !content)
+      return res.status(400).json({ error: "user_id, title, and content are required" });
+
+    const { data, error } = await supabase
+      .from("posts")
+      .insert([
+        {
+          date: date || new Date(),
+          like_count: like_count || 0,
+          dislike_count: dislike_count || 0,
+          country_name,
+          country_id,
+          user_id,
+          title,
+          content,
+          image
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json({ message: "Post created successfully", post: data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ---------------------
+// 🔹 SERVER START
+// ---------------------
+
 app.listen(PORT, () => console.log(`Supabase API running on port ${PORT}`));
