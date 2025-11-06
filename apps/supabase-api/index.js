@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 3001;
 // ---------------------
 
 // ✅ Register new user
-app.post("/p_users", async (req, res) => {
+app.post("/p_users/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -62,7 +62,7 @@ app.post("/p_users", async (req, res) => {
 });
 
 // ✅ Login user (check username/email + password)
-app.post("/p_users", async (req, res) => {
+app.post("/p_users/login", async (req, res) => {
   try {
     const { emailOrUsername, password } = req.body;
 
