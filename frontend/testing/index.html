@@ -68,7 +68,7 @@
       const email = document.querySelector("#reg-email").value;
       const password = document.querySelector("#reg-password").value;
 
-      const result = await request("/users/register", "POST", { username, email, password });
+      const result = await request("/users", "POST", { username, email, password });
       document.querySelector("#register-result").textContent = JSON.stringify(result, null, 2);
     });
 
@@ -77,7 +77,7 @@
       const emailOrUsername = document.querySelector("#login-email").value;
       const password = document.querySelector("#login-password").value;
 
-      const result = await request("/users/login", "POST", { emailOrUsername, password });
+      const result = await request("/users", "POST", { emailOrUsername, password });
       document.querySelector("#login-result").textContent = JSON.stringify(result, null, 2);
     });
 
