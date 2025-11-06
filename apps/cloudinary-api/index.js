@@ -47,7 +47,6 @@ app.get("/file/*path", async (req, res) => {
     }
     res.send(correct_public_id); // Hmm
     const info = await cloudinary.api.resource(correct_public_id);
-    info.public_id = public_id;
     res.json(info);
   } catch (error) {
     console.error(error);
