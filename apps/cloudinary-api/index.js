@@ -42,10 +42,10 @@ app.get("/file/*path", async (req, res) => {
     const public_id = req.params.path;
     // res.send(public_id); // Hmm
     if (Array.isArray(public_id)) {
-      public_id = public_id.join("/"); // join with slash
+      const correct_public_id = public_id.join("/"); // join with slash
     }
-    res.send(public_id); // Hmm
-    const info = await cloudinary.api.resource(public_id);
+    res.send(correct_public_id); // Hmm
+    const info = await cloudinary.api.resource(correct_public_id);
     info.public_id = public_id;
     res.json(info);
   } catch (error) {
