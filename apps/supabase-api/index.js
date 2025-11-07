@@ -4,7 +4,11 @@ import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import session from "express-session";
 import bcrypt from "bcrypt"; // for password hashing
-import countryCodes from "./countryCodes.json" assert { type: "json" };
+import fs from "fs";
+import path from "path";
+
+const countryCodesPath = path.resolve("./countryCodes.json");
+const countryCodes = JSON.parse(fs.readFileSync(countryCodesPath, "utf-8"));
 
 dotenv.config(); 
 
@@ -189,7 +193,7 @@ app.post("/posts", async (req, res) => {
         return res.status(400).json({ error: `Invalid country name: ${country_name}` });
       }
     }
-    
+
     const { data, error } = await supabase
       .from("posts")
       .insert([
