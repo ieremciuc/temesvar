@@ -125,6 +125,8 @@
         document.querySelector("#create-post-result").textContent = "Please select a file first.";
         return;
       }
+      
+      const formData = new FormData();
       formData.append("imageFile", imageFile);
 
       try {
