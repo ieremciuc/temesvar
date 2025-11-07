@@ -4,8 +4,10 @@ import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import session from "express-session";
 import bcrypt from "bcrypt"; // for password hashing
+import pgSession from "connect-pg-simple";
 
-dotenv.config();
+dotenv.config(); 
+const pgStore = pgSession(session);
 
 const app = express();
 app.use(cors({
@@ -15,6 +17,9 @@ app.use(cors({
 app.use(express.json());
 
 app.use(session({
+  store: new pgStore({
+    conString: process.env.DATABASE_URL, // your Postgres connection string
+  }),
   secret: process.env.SESSION_SECRET || "supersecretkey", // use a secure value in production
   resave: false,
   saveUninitialized: false,
