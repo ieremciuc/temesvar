@@ -140,7 +140,7 @@
       }
 
       const formData = new FormData();
-      formData.append("imageFile", imageFile);
+      formData.append("file", imageFile);
 
       try {
         const uploadRes = await fetch(`${CLOUDINARY_API_URL}/upload`, {
@@ -172,7 +172,7 @@
       document.querySelector("#get-post-result").textContent = JSON.stringify(result, null, 2);
     });
 
-     const fileInput = document.querySelector("#file-input");
+    const fileInput = document.querySelector("#file-input");
     const uploadBtn = document.querySelector("#upload-btn");
     const uploadResult = document.querySelector("#upload-result");
     const fetchInfoBtn = document.querySelector("#fetch-info-btn");
