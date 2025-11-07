@@ -119,17 +119,33 @@
       const title = document.querySelector("#post-title").value;
       const content = document.querySelector("#post-content").value;
       const country_name = document.querySelector("#post-country").value;
-      const image = document.querySelector("#post-image").value;
+      const imageFile = document.querySelector("#post-image").files[0];
 
-      const result = await request("/posts", "POST", {
-        user_id,
-        title,
-        content,
-        country_name,
-        image
-      });
+      if (!imageFile) {
+        alert("Please select a file first.");
+        return;
+      }
+      formData.append("imageFile", imageFile);
 
-      document.querySelector("#create-post-result").textContent = JSON.stringify(result, null, 2);
+      try {
+        const uploadRes = await fetch("/upload", {
+          method: "POST",
+          body: formData
+        });
+        const { public_id } = await uploadRes.json();
+        
+        const result = await request("/posts", "POST", {
+          user_id,
+          title,
+          content,
+          country_name,
+          image: public_id
+        });
+
+        document.querySelector("#create-post-result").textContent = JSON.stringify(result, null, 2);
+      } catch (err) {
+        document.querySelector("#create-post-result").textContent = "Upload failed: " + err.message;
+      }
     });
 
     // ======= Get Post =======

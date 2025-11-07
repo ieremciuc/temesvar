@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import session from "express-session";
 import bcrypt from "bcrypt"; // for password hashing
+import countryCodes from "./countryCodes.json" assert { type: "json" };
 
 dotenv.config(); 
 
@@ -170,7 +171,6 @@ app.post("/posts", async (req, res) => {
       like_count,
       dislike_count,
       country_name,
-      country_id,
       user_id,
       title,
       content,
@@ -181,6 +181,15 @@ app.post("/posts", async (req, res) => {
     if (!user_id || !title || !content)
       return res.status(400).json({ error: "user_id, title, and content are required" });
 
+    // Transform country name to country code
+    let country_id = null;
+    if (country_name) {
+      country_id = countryCodes[country_name];
+      if (!country_id) {
+        return res.status(400).json({ error: `Invalid country name: ${country_name}` });
+      }
+    }
+    
     const { data, error } = await supabase
       .from("posts")
       .insert([
