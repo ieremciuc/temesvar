@@ -133,7 +133,9 @@
           body: formData
         });
         const { public_id } = await uploadRes.json();
-        
+
+        document.querySelector("#create-post-result").textContent = public_id;
+
         const result = await request("/posts", "POST", {
           user_id,
           title,
