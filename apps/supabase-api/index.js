@@ -97,7 +97,7 @@ app.post("/p_users/login", async (req, res) => {
     if (!isPasswordValid)
       return res.status(401).json({ error: "Invalid password" });
 
-    req.session.userId = user.id;
+    req.session.userId = user.user_id;
     console.log("Session created:", req.session);
 
     res.json({
