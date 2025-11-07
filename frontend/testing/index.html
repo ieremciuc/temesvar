@@ -122,7 +122,7 @@
       const imageFile = document.querySelector("#post-image").files[0];
 
       if (!imageFile) {
-        alert("Please select a file first.");
+        document.querySelector("#create-post-result").textContent = "Please select a file first.";
         return;
       }
       formData.append("imageFile", imageFile);
