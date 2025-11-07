@@ -118,7 +118,7 @@ app.post("/p_users/login", async (req, res) => {
 app.get("/p_users/me", (req, res) => {
   if (!req.session.userId) {
     // return res.status(401).json({ loggedIn: false });
-    return res.status(401).json({ was: ist });
+    return res.status(401).json({ loggedIn: true, userId: req.session.userId });
   }
   res.json({ loggedIn: true, userId: req.session.userId });
 });
