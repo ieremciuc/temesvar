@@ -128,7 +128,7 @@
       formData.append("imageFile", imageFile);
 
       try {
-        const uploadRes = await fetch("/upload", {
+        const uploadRes = await fetch(`${CLOUDINARY_API_URL}/upload`, {
           method: "POST",
           body: formData
         });
