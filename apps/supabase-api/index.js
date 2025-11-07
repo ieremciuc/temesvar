@@ -100,6 +100,11 @@ app.post("/p_users/login", async (req, res) => {
 
     req.session.userId = user.user_id;
     console.log("Session created:", req.session);
+    // ---
+    if (!req.session.userId) {
+      return res.status(401).json({ loggedIn: false });
+    }
+    // ---
 
     res.json({
       message: "Login successful",
@@ -119,7 +124,6 @@ app.post("/p_users/login", async (req, res) => {
 app.get("/p_users/me", (req, res) => {
   if (!req.session.userId) {
     return res.status(401).json({ loggedIn: false });
-    // return res.status(401).json({ was: ist });
   }
   res.json({ loggedIn: true, userId: req.session.userId });
 });
