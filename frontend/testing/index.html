@@ -76,6 +76,7 @@
   <script type="module">
     import { SUPABASE_API_URL } from "../config.js";
     import { CLOUDINARY_API_URL } from "../config.js";
+    import { CLOUDINARY_URL } from "../config.js";
 
     // ======= Helper request function =======
     async function request(endpoint, method = "GET", body = null) {
@@ -140,7 +141,7 @@
       // Optional: show profile picture preview if available
       if (result?.profile_picture) {
         document.querySelector("#basic-user-result").innerHTML += `
-          <br><img src="https://res.cloudinary.com/dsmrwftcx/image/upload/${result.profile_picture}.jpg" width="100" alt="Profile Picture">
+          <br><img src="${CLOUDINARY_URL}${result.profile_picture}.jpg" width="100" alt="Profile Picture">
         `;
       }
     });
