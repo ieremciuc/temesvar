@@ -110,7 +110,7 @@
             body: formData
           });
           const { public_id } = await uploadRes.json();
-          const result = await request("/p_users/register", "POST", { username, email, password, image: public_id });
+          const result = await request("/p_users/register", "POST", { username, email, password, profile_picture: public_id });
           document.querySelector("#register-result").textContent = JSON.stringify(result, null, 2);
         } else {
           const result = await request("/p_users/register", "POST", { username, email, password });
