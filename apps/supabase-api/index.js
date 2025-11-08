@@ -367,7 +367,7 @@ app.get("/posts/:post_id/reactions/:user_id", async (req, res) => {
     const reaction = await getUserReaction(user_id, post_id);
 
     if (!reaction) {
-      return res.status(404).json({ message: "No reaction found for this user and post" });
+      return res.status(404).json({ reaction: { reaction_type: null } });
     }
 
     res.json({ reaction });
