@@ -149,7 +149,7 @@
         });
         const { public_id } = await uploadRes.json();
 
-        document.querySelector("#create-post-result").textContent = public_id;
+        // document.querySelector("#create-post-result").textContent = public_id;
 
         const result = await request("/posts", "POST", {
           user_id,
@@ -220,6 +220,73 @@
       } catch (err) {
         fileInfo.textContent = "Failed to fetch info: " + err.message;
       }
+    });
+  </script>
+
+  <!-- ======= REACTIONS ======= -->
+  <h2>Reactions</h2>
+
+  <!-- Inputs for reactions -->
+  <input id="reaction-user-id" placeholder="User ID" />
+  <input id="reaction-post-id" placeholder="Post ID" />
+  <select id="reaction-type">
+    <option value="like">Like</option>
+    <option value="dislike">Dislike</option>
+  </select>
+  <button id="add-reaction-btn">Add / Update Reaction</button>
+  <button id="remove-reaction-btn">Remove Reaction</button>
+  <button id="get-reactions-btn">Get Reactions for Post</button>
+
+  <pre id="reaction-result"></pre>
+
+  <script type="module">
+    // ======= Reactions JS =======
+
+    const addReactionBtn = document.querySelector("#add-reaction-btn");
+    const removeReactionBtn = document.querySelector("#remove-reaction-btn");
+    const getReactionsBtn = document.querySelector("#get-reactions-btn");
+    const reactionResult = document.querySelector("#reaction-result");
+
+    // Add or update reaction
+    addReactionBtn.addEventListener("click", async () => {
+      const user_id = document.querySelector("#reaction-user-id").value;
+      const post_id = document.querySelector("#reaction-post-id").value;
+      const reaction_type = document.querySelector("#reaction-type").value;
+
+      if (!user_id || !post_id) {
+        reactionResult.textContent = "Please provide both User ID and Post ID.";
+        return;
+      }
+
+      const result = await request(`/posts/${post_id}/reactions`, "POST", { user_id, reaction_type });
+      reactionResult.textContent = JSON.stringify(result, null, 2);
+    });
+
+    // Remove reaction
+    removeReactionBtn.addEventListener("click", async () => {
+      const user_id = document.querySelector("#reaction-user-id").value;
+      const post_id = document.querySelector("#reaction-post-id").value;
+
+      if (!user_id || !post_id) {
+        reactionResult.textContent = "Please provide both User ID and Post ID.";
+        return;
+      }
+
+      const result = await request(`/posts/${post_id}/reactions`, "DELETE", { user_id });
+      reactionResult.textContent = JSON.stringify(result, null, 2);
+    });
+
+    // Get all reactions for a post
+    getReactionsBtn.addEventListener("click", async () => {
+      const post_id = document.querySelector("#reaction-post-id").value;
+
+      if (!post_id) {
+        reactionResult.textContent = "Please provide Post ID.";
+        return;
+      }
+
+      const result = await request(`/posts/${post_id}/reactions`, "GET");
+      reactionResult.textContent = JSON.stringify(result, null, 2);
     });
   </script>
 </body>

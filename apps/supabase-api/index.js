@@ -222,6 +222,100 @@ app.post("/posts", async (req, res) => {
 });
 
 // ---------------------
+// 🔹 REACTIONS ROUTES
+// ---------------------
+
+// ✅ Get all reactions for a post
+app.get("/posts/:id/reactions", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data, error } = await supabase
+      .from("reactions")
+      .select("reaction_id, user_id, reaction_type, created_at")
+      .eq("post_id", id);
+
+    if (error) throw error;
+
+    res.json({ reactions: data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ✅ Add or change a reaction (like/dislike)
+app.post("/posts/:id/reactions", async (req, res) => {
+  try {
+    const { id: post_id } = req.params;
+    const { user_id, reaction_type } = req.body;
+
+    if (!user_id || !reaction_type)
+      return res.status(400).json({ error: "user_id and reaction_type are required" });
+
+    // Check if the user already reacted to this post
+    const { data: existing } = await supabase
+      .from("reactions")
+      .select("reaction_id, reaction_type")
+      .eq("user_id", user_id)
+      .eq("post_id", post_id)
+      .maybeSingle();
+
+    if (!existing) {
+      // Add new reaction
+      const { data, error } = await supabase
+        .from("reactions")
+        .insert([{ user_id, post_id, reaction_type }])
+        .select()
+        .single();
+      if (error) throw error;
+      return res.json({ message: "Reaction added", reaction: data });
+    } else if (existing.reaction_type !== reaction_type) {
+      // Update reaction
+      const { data, error } = await supabase
+        .from("reactions")
+        .update({ reaction_type })
+        .eq("reaction_id", existing.reaction_id)
+        .select()
+        .single();
+      if (error) throw error;
+      return res.json({ message: "Reaction updated", reaction: data });
+    } else {
+      // Same reaction exists, do nothing or optionally remove
+      return res.json({ message: "Reaction already exists", reaction: existing });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ✅ Remove a reaction
+app.delete("/posts/:id/reactions", async (req, res) => {
+  try {
+    const { id: post_id } = req.params;
+    const { user_id } = req.body;
+
+    if (!user_id) return res.status(400).json({ error: "user_id is required" });
+
+    const { data, error } = await supabase
+      .from("reactions")
+      .delete()
+      .eq("user_id", user_id)
+      .eq("post_id", post_id)
+      .select();
+
+    if (error) throw error;
+    if (!data || data.length === 0) return res.status(404).json({ error: "Reaction not found" });
+
+    res.json({ message: "Reaction removed", reaction: data[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ---------------------
 // 🔹 SERVER START
 // ---------------------
 
