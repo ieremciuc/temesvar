@@ -28,6 +28,7 @@
   <input id="reg-username" placeholder="Username" />
   <input id="reg-email" placeholder="Email" />
   <input id="reg-password" placeholder="Password" type="password" />
+  <input id="profile-picture" type="file" accept="image/*" />
   <button id="register-btn">Register</button>
   <pre id="register-result"></pre>
 
@@ -92,9 +93,35 @@
       const username = document.querySelector("#reg-username").value;
       const email = document.querySelector("#reg-email").value;
       const password = document.querySelector("#reg-password").value;
+      const imageFile = document.querySelector("#profile-picture").files[0];
+      // ---
+      if (!imageFile) {
+        document.querySelector("#create-post-result").textContent = "Please select a file first.";
+        return;
+      }
 
-      const result = await request("/p_users/register", "POST", { username, email, password });
-      document.querySelector("#register-result").textContent = JSON.stringify(result, null, 2);
+      const formData = new FormData();
+      formData.append("file", imageFile);
+
+      try {
+        if(imageFile) {
+          const uploadRes = await fetch(`${CLOUDINARY_API_URL}/upload`, {
+            method: "POST",
+            body: formData
+          });
+          const { public_id } = await uploadRes.json();
+          const result = await request("/p_users/register", "POST", { username, email, password, image: public_id });
+          document.querySelector("#register-result").textContent = JSON.stringify(result, null, 2);
+        } else {
+          const result = await request("/p_users/register", "POST", { username, email, password });
+          document.querySelector("#register-result").textContent = JSON.stringify(result, null, 2);
+        }
+      } catch (err) {
+        document.querySelector("#create-post-result").textContent = "Upload failed: " + err.message;
+      }
+      // ---
+      // const result = await request("/p_users/register", "POST", { username, email, password });
+      // document.querySelector("#register-result").textContent = JSON.stringify(result, null, 2);
     });
 
     // ======= Login =======
