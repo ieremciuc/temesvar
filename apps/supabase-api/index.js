@@ -41,6 +41,22 @@ const supabase = createClient(
 const PORT = process.env.PORT || 3001;
 
 // ---------------------
+// 🔹 HELPER FUNCTION: Get minimal user info (username + profile_picture)
+// ---------------------
+async function getBasicUserInfo(user_id) {
+  if (!user_id) throw new Error("Missing user_id");
+
+  const { data, error } = await supabase
+    .from("p_users")
+    .select("username, profile_picture")
+    .eq("user_id", user_id)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+// ---------------------
 // 🔹 USER ROUTES
 // ---------------------
 
@@ -140,6 +156,18 @@ app.post("/p_users/logout", (req, res) => {
     res.clearCookie("connect.sid");
     res.json({ message: "Logged out successfully" });
   });
+});
+
+// ✅ Get username and profile picture by user ID
+app.get("/p_users/:id/basic", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await getBasicUserInfo(id);
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(404).json({ error: "User not found" });
+  }
 });
 
 // ---------------------
