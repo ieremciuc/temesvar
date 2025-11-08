@@ -284,6 +284,7 @@
         reactionResult.textContent = "Please provide Post ID.";
         return;
       }
+      reactionResult.textContent = post_id;
 
       const result = await request(`/posts/${post_id}/reactions`, "GET");
       reactionResult.textContent = JSON.stringify(result, null, 2);
