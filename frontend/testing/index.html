@@ -241,7 +241,25 @@
 
   <script type="module">
     // ======= Reactions JS =======
+    import { SUPABASE_API_URL } from "../config.js";
+    import { CLOUDINARY_API_URL } from "../config.js";
 
+    // ======= Helper request function =======
+    async function request(endpoint, method = "GET", body = null) {
+      const options = {
+        method,
+        headers: { "Content-Type": "application/json" },
+        credentials: "include" // ✅ include cookies for session
+      };
+      if (body) options.body = JSON.stringify(body);
+
+      const res = await fetch(`${SUPABASE_API_URL}${endpoint}`, options);
+      try {
+        return await res.json();
+      } catch {
+        return { error: "Invalid JSON response" };
+      }
+    }
     const addReactionBtn = document.querySelector("#add-reaction-btn");
     const removeReactionBtn = document.querySelector("#remove-reaction-btn");
     const getReactionsBtn = document.querySelector("#get-reactions-btn");

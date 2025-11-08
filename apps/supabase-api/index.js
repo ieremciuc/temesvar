@@ -249,7 +249,7 @@ app.post("/posts/:id/reactions", async (req, res) => {
   try {
     const { id: post_id } = req.params;
     const { user_id, reaction_type } = req.body;
-
+    
     if (!user_id || !reaction_type)
       return res.status(400).json({ error: "user_id and reaction_type are required" });
 
