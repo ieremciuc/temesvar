@@ -344,6 +344,40 @@ app.delete("/posts/:id/reactions", async (req, res) => {
 });
 
 // ---------------------
+// 🔹 HELPER FUNCTION: Get a specific reaction from a user for a post
+// ---------------------
+async function getUserReaction(user_id, post_id) {
+  if (!user_id || !post_id) throw new Error("Missing user_id or post_id");
+
+  const { data, error } = await supabase
+    .from("reactions")
+    .select("reaction_id, user_id, post_id, reaction_type, created_at")
+    .eq("user_id", user_id)
+    .eq("post_id", post_id)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data; // returns null if not found
+}
+
+// ✅ Get a specific user's reaction to a post
+app.get("/posts/:post_id/reactions/:user_id", async (req, res) => {
+  try {
+    const { post_id, user_id } = req.params;
+    const reaction = await getUserReaction(user_id, post_id);
+
+    if (!reaction) {
+      return res.status(404).json({ message: "No reaction found for this user and post" });
+    }
+
+    res.json({ reaction });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ---------------------
 // 🔹 SERVER START
 // ---------------------
 

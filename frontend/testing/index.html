@@ -129,7 +129,7 @@
       // const result = await request("/p_users/register", "POST", { username, email, password });
       // document.querySelector("#register-result").textContent = JSON.stringify(result, null, 2);
     });
-
+    
 
     // ======= Get Basic User Info =======
     document.querySelector("#get-basic-user-btn").addEventListener("click", async () => {
@@ -287,6 +287,13 @@
 
   <pre id="reaction-result"></pre>
 
+    <!-- ======= GET SPECIFIC USER REACTION ======= -->
+  <h2>Get Specific User Reaction</h2>
+  <input id="specific-user-id" placeholder="User ID" />
+  <input id="specific-post-id" placeholder="Post ID" />
+  <button id="get-specific-reaction-btn">Get Reaction</button>
+  <pre id="specific-reaction-result"></pre>
+
   <script type="module">
     // ======= Reactions JS =======
     import { SUPABASE_API_URL } from "../config.js";
@@ -354,6 +361,23 @@
 
       const result = await request(`/posts/${post_id}/reactions`, "GET");
       reactionResult.textContent = JSON.stringify(result, null, 2);
+    });
+
+     // ======= Get specific user's reaction for a post =======
+    const getSpecificReactionBtn = document.querySelector("#get-specific-reaction-btn");
+    const specificReactionResult = document.querySelector("#specific-reaction-result");
+
+    getSpecificReactionBtn.addEventListener("click", async () => {
+      const user_id = document.querySelector("#specific-user-id").value;
+      const post_id = document.querySelector("#specific-post-id").value;
+
+      if (!user_id || !post_id) {
+        specificReactionResult.textContent = "Please provide both User ID and Post ID.";
+        return;
+      }
+
+      const result = await request(`/posts/${post_id}/reactions/${user_id}`, "GET");
+      specificReactionResult.textContent = JSON.stringify(result, null, 2);
     });
   </script>
 </body>
