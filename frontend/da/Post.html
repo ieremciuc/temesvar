@@ -10,18 +10,18 @@
             <label for="country"> Country:</label>
             <select id="country">
                 <option value="">Pick a country</option>
-                <option>România</option>
-                <option>Italia</option>
-                <option>Franța</option>
-                <option>Spania</option>
-                <option>Germania</option>
-                <option>Statele Unite</option>
+                <option>Romania</option>
+                <option>Italy</option>
+                <option>France</option>
+                <option>Spain</option>
+                <option>Germany</option>
+                <option>USA</option>
             </select>
             <div class="checkbox-group">
                 <div class="label1">
                     <label for="isEvent"> Event</label>
                 </div>
-                <div class="chechbox">
+                <div class="checkbox">
                     <input type="checkbox" id="isEvent">
                 </div>
             </div>
@@ -41,7 +41,7 @@
             const fileName = localStorage.getItem('selectedFileName');
 
             if (!country || !description) {
-            alert("Completează toate câmpurile!");
+            alert("Complete!");
             return;
             }
 
