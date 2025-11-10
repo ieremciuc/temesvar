@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width-device-width, initial-scale=1.0">
+        <title> Folkline </title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body> 
+        <div class="container">
+            <input type="file" id="fileInput" accept="image/*,video/*">
+            <button id="continueBtn" disabled>Continue</button>
+        </div>
+        
+        <script>
+            const fileInput = document.getElementById('fileInput');
+            const continueBtn = document.getElementById('continueBtn');
+            const preview = document.getElementById('preview');
+
+            fileInput.addEventListener('change', ()=> {
+                const file = fileInput.files[0];
+                if(file)
+                    {continueBtn.disabled=false;}
+                });
+                continueBtn.addEventListener('click', () => {
+                localStorage.setItem('selectedFileName', fileInput.files[0].name);
+                window.location.href = 'Post.html';
+            });
+        </script>
+    </body>
+</html>
