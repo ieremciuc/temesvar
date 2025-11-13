@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+body{
+    color: #EDE9DE;
+    background-color: #1C2632;
+    font-family: "DM Sans", sans-serif;
+}
+
+h1{
+    font-weight: bold;
+    color: #FEB161;
+}
+
+h2{
+    font-weight: bold;
+}
+
+.smltxt{
+    font-size: small;
+    color: #C9C2B2;
+}
+
+.content{
+    margin: auto;
+    width: 50vw;
+}
+
+.img-button{
+    width: auto;
+    height: 20px;
+}
+
+.button-container{
+    margin: 2vh 0 2vh 0;
+    display: flex;
+    vertical-align: middle;
+}
+
+.button-container p{
+    margin: 0 12px 0 12px;
+}
+
+.infobox-container{
+    display: flex;
+    gap: 8px;
+}
+
+.infobox{
+    background-color: #2C3B4E;
+    border-radius: 10px;
+    padding: 12px;
+    flex: 1;
+}
+
+.infobox p, .infobox h2{
+    margin: 0;
+    font-weight: bold;
+}
+
+.center{
+    text-align: center;
+}
+
+/* Post */
+.post{
+    width: 70%;
+    margin: auto;
+}
+
+.post-img{
+    flex: 1;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-color: #EDE9DE;
+    border-width: 2px;
+    border-radius: 10px;
+    border-style: solid;
+}
+
+/* Tab */
+.tabs {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.tabs button {
+    flex: 1;
+    background-color: inherit;
+    color: #EDE9DE;
+    font-family: "DM Sans", sans-serif;
+    font-size: 1.25rem;
+    float: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.tabs button:hover{
+    color: #b8b1a3;
+    transition: 0.3s;
+}
+
+.tabs button.active {
+    color: #FEB161;
+    font-weight: bold;
+}
+
+.tab-content {
+  display: none;
+  padding: 16px 0 0 0;
+}
+
+/* Profil */
+
+.pfp-large{
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 100%;
+}
+
+.display-profile{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2vh 0 2vh 0;
+}
+
+.title-profile{
+    display: flex;
+    flex-direction: column;
+    vertical-align: middle;
+}
+
+.title-profile p, h2{
+    margin: 0.5vh 0 0.5vh 0;
+}
+
+.img-profile{
+    object-fit: cover;
+}
+
+/* Adaptiv */
+
+@media (max-width: 768px) {
+    .content{
+        width: 90vw;
+    }
+}
