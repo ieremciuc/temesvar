@@ -126,7 +126,7 @@
           document.querySelector("#register-result").textContent = JSON.stringify(result, null, 2);
         }
       } catch (err) {
-        document.querySelector("#create-post-result").textContent = "Upload failed: " + err.message;
+        document.querySelector("#register-result").textContent = "Upload failed: " + err.message;
       }
       // ---
       // const result = await request("/p_users/register", "POST", { username, email, password });
