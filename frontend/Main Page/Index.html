@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width-device-width, initial-scale=1.0">
+        <title>Folkline</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="container">
+            <label for="country"> Country:</label>
+            <select id="country">
+                <option value="">Pick a country</option>
+                <option>Spain</option>
+                <option>Germany</option>
+                <option>USA</option>
+            </select>
+            <div class="checkbox-group">
+                <div class="label1">
+                    <label for="isEvent"> Event</label>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" id="isEvent">
+                </div>
+            </div>
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="insert *cute description*"></textarea>
+            <button id="postBtn"> POST</button>
+            <button id="backBtn" class="secondary">Back</button>
+        </div>
+        <script>
+            const postBtn = document.getElementById('postBtn');
+            const backBtn = document.getElementById('backBtn');
+
+            postBtn.addEventListener('click', () => {
+            const country = document.getElementById('country').value;
+            const isEvent = document.getElementById('isEvent').checked;
+            const description = document.getElementById('description').value;
+            const fileName = localStorage.getItem('selectedFileName');
+
+            if (!country || !description) {
+            alert("Complete!");
+            return;
+            }
+
+             alert(
+                `Country: ${country}\nTip: ${isEvent ? "Event" : "Post"}\nDescription: ${description}\nFișier: ${fileName}`
+            );
+            });
+
+            backBtn.addEventListener('click', () => {
+            window.location.href = 'select.html';
+            });
+  </script>
+    </body>
+</html>

@@ -102,13 +102,15 @@
       const password = document.querySelector("#reg-password").value;
       const imageFile = document.querySelector("#profile-picture").files[0];
       // ---
-      if (!imageFile) {
-        document.querySelector("#create-post-result").textContent = "Please select a file first.";
-        return;
-      }
+      // if (!imageFile) {
+      //   document.querySelector("#register-result").textContent = "Please select a file first.";
+      //   return;
+      // }
 
-      const formData = new FormData();
-      formData.append("file", imageFile);
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+      }
 
       try {
         if(imageFile) {
