@@ -27,7 +27,6 @@
                     <h2>420</h2>
                 </div>
             </div>
-
             <script type="module">
                 import { SUPABASE_API_URL } from "../config.js";
                 import { CLOUDINARY_API_URL } from "../config.js";
@@ -51,7 +50,7 @@
                 }
                 const id = 10;
                 const result = await request(`/p_users/${id}/basic`, "GET");
-                document.getElementById("username").textContent = result.username;
+                document.querySelector("#username").textContent = result.username;
             </script>
 
             <! -- Postări -->
