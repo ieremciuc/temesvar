@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Folkline Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    html, body, #map { height: 100%; margin: 0; padding: 0; background: #1B2632; }
+    .leaflet-container { background: #1B2632 !important; }
+    .leaflet-tile-pane { display: none !important; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script>
+    const map = L.map('map', {
+      center: [20, 0],
+      zoom: 2,
+      zoomControl: false,
+      attributionControl: false,
+      minZoom: 2,
+      maxZoom: 5,
+      tap: true,
+      tapTolerance: 30
+    });
+
+    let selectedLayer = null;
+
+    fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
+      .then(r => r.json())
+      .then(data => {
+        L.geoJSON(data, {
+          style: { fillColor: "#2C3B4D", color: "#1B2632", weight: 1.5, fillOpacity: 1 },
+          onEachFeature: (feature, layer) => {
+            const name = feature.properties.name;
+            if (!name) return;
+
+            // Evidențiază Polonia
+            if (name === "Poland") {
+              layer.setStyle({ fillColor: "#FFB162" });
+              selectedLayer = layer;
+              postMessage(name);
+            }
+
+            layer.on('click', () => {
+              if (selectedLayer) {
+                selectedLayer.setStyle({ fillColor: "#2C3B4D" });
+              }
+              layer.setStyle({ fillColor: "#FFB162" });
+              selectedLayer = layer;
+              postMessage(name);
+            });
+
+            layer.on('mouseover', () => {
+              if (layer !== selectedLayer) {
+                layer.setStyle({ fillColor: "#3C4B5C" });
+              }
+            });
+            layer.on('mouseout', () => {
+              if (layer !== selectedLayer) {
+                layer.setStyle({ fillColor: "#2C3B4D" });
+              }
+            });
+          }
+        }).addTo(map);
+      });
+
+    function postMessage(name) {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(name);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="resources/style.css">
+    </head>
+    <body>
+        <div class="content">
+            <! -- Profil --> 
+            <h2>Profil</h2>
+            <div class="display-profile">
+                <div class="img-profile"><img src="resources/setap.png" class="pfp-large"></div>
+                <div class="title-profile">
+                    <h2>Setap Dede</h2>
+                    <p class="smltxt">@setapdede</p>
+                </div>
+            </div>
+            <div class="infobox-container">
+                <div class="infobox">
+                    <p>Postări</p>
+                    <h2>20</h2>
+                </div>
+                <div class="infobox">
+                    <p>Urmăritori</p>
+                    <h2>3.141</h2>
+                </div>
+                <div class="infobox">
+                    <p>Urmărește</p>
+                    <h2>420</h2>
+                </div>
+            </div>
+
+            <! -- Bio --> 
+            <p>I am someone that has forgotten to write a bio for this concept. I have no idea what else to put here. :)</p>
+
+            <! -- Postări -->
+            <div class="tabs">
+                <button class="tab-link" onclick="openType(event, 'Postări')"  id="defaultOpen">Postări</button>
+                <button class="tab-link" onclick="openType(event, 'Evenimente')">Evenimente</button>
+            </div>
+            <div id="Postări" class="tab-content">
+                <div class="post">
+                    <h2>Venice at night</h2>
+                    <p class="smltxt">31 February 2025</p>
+                    <img class="post-img" src="resources/venice.jpg">
+                    <div class="button-container">
+                        <img class="img-button" src="resources/svg/like.svg">
+                        <p>test</p>
+                    </div>
+                </div>
+            </div>
+            <div id="Evenimente" class="tab-content">
+                <h3>London</h3>
+                <p>asdsas is the capital city of England.</p>
+            </div>
+
+            <script>
+                function openType(evt, Name) {
+                var i, tabcontent, tablink;
+                tabcontent = document.getElementsByClassName("tab-content");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablink = document.getElementsByClassName("tab-link");
+                for (i = 0; i < tablink.length; i++) {
+                    tablink[i].className = tablink[i].className.replace(" active", "");
+                }
+                document.getElementById(Name).style.display = "block";
+                evt.currentTarget.className += " active";
+                }
+                document.getElementById("defaultOpen").click();
+            </script>
+        </div>
+    </body>
+</html>
