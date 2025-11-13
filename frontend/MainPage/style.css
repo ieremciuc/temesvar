@@ -1,0 +1,9 @@
+body{
+    background-color: hsl(190, 44%, 56%)
+}
+
+.container{
+    background-color: thistle;
+    width: 80%;
+    margin: auto;
+}
