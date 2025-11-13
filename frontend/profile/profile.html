@@ -10,8 +10,7 @@
             <div class="display-profile">
                 <div class="img-profile"><img src="resources/setap.png" class="pfp-large"></div>
                 <div class="title-profile">
-                    <h2>Setap Dede</h2>
-                    <p class="smltxt">@setapdede</p>
+                    <h2 id="username">Setap Dede</h2>
                 </div>
             </div>
             <div class="infobox-container">
@@ -52,7 +51,7 @@
                 }
                 const id = 10;
                 const result = await request(`/p_users/${id}/basic`, "GET");
-                console.log(result.username);
+                document.getElementById("username").textContent = result.username;
             </script>
 
             <! -- Postări -->
